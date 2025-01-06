@@ -8,13 +8,11 @@ from textblob import TextBlob
 from transformers import pipeline
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton
 
-# Initialize recognizer, text-to-speech engine, and OpenAI API
 r = sr.Recognizer()
 engine = pyttsx3.init(driverName='sapi5')
 openai.api_key = "YOUR_OPENAI_KEY"
 classifier = pipeline("text-classification", model="distilbert-base-uncased")
 
-# Function to generate a dynamic chief complaint with human-like variation
 def generate_chief_complaint():
     complaints = [
     "I have a headache that won't go away.",
@@ -52,7 +50,6 @@ def generate_chief_complaint():
     return random.choice(complaints)
 
 
-# Speech-to-text function
 def speak(text):
     try:
         engine.say(text)
@@ -60,7 +57,6 @@ def speak(text):
     except Exception as e:
         print(f"Error in speak function: {e}")
 
-# Speech recognition function
 def recognize_speech():
     with sr.Microphone() as source:
         print("Speak:")
@@ -76,7 +72,6 @@ def recognize_speech():
         print("Request Error from Google Speech Recognition service")
         return None
 
-# Function to get response from GPT
 def get_gpt_response(prompt, chief_complaint, retries=5, wait_time=1, max_wait_time=32):
     try:
         response = openai.ChatCompletion.create(
@@ -113,7 +108,6 @@ def analyze_sentiment(response):
     else:
         sentiment = "Neutral"
 
-    # Providing subjectivity for a more nuanced analysis
     if subjectivity > 0.5:
         sentiment_detail = f"Patient is quite subjective, potentially emotional."
     else:
@@ -121,7 +115,6 @@ def analyze_sentiment(response):
 
     return sentiment, sentiment_detail
 
-# Evaluate question quality
 def evaluate_question_quality(question, context=""):
     if len(question.split()) < 3: 
         return 3
@@ -146,7 +139,6 @@ def evaluate_question_quality(question, context=""):
     final_score = min(max(final_score, 1), 10)
     return round(final_score, 2)
 
-# Function to provide guidance for the next question
 def get_guidance(context, chief_complaint):
     try:
         prompt = f"Based on the following conversation: {context}, with the patient's chief complaint being: {chief_complaint}, what should be asked next to further the investigation and reach a diagnosis?"
@@ -161,49 +153,42 @@ def get_guidance(context, chief_complaint):
     except Exception as e:
         return f"An error occurred while providing guidance: {str(e)}"
 
-# Main GUI class for the chatbot
 class ChatBotApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
         self.conversation_context = []
-        self.chief_complaint = generate_chief_complaint()  # Generate dynamic chief complaint
-        print(f"Generated Chief Complaint: {self.chief_complaint}")  # You can log this for testing
+        self.chief_complaint = generate_chief_complaint()  
+        print(f"Generated Chief Complaint: {self.chief_complaint}") 
 
     def initUI(self):
         self.setWindowTitle('AI Medical Chatbot')
 
-        # Main vertical layout for the window
         self.layout = QVBoxLayout()
 
-        # Labels for user input and AI responses
         self.input_label = QLabel("User Input:")
         self.layout.addWidget(self.input_label)
 
-        # Create the input box for user input
         self.input_box = QTextEdit()
-        self.input_box.setFixedHeight(150)  # Set the height of the input box
+        self.input_box.setFixedHeight(150)  
         self.layout.addWidget(self.input_box)
 
         self.response_label = QLabel("AI Response:")
         self.layout.addWidget(self.response_label)
 
-        # Create the response box for AI responses
         self.response_box = QTextEdit()
-        self.response_box.setFixedHeight(150)  # Set the height of the response box
+        self.response_box.setFixedHeight(150)
         self.response_box.setReadOnly(True)
         self.layout.addWidget(self.response_box)
 
-        # Guidance label and box
         self.guidance_label = QLabel("Guidance:")
         self.layout.addWidget(self.guidance_label)
 
         self.guidance_box = QTextEdit()
-        self.guidance_box.setFixedHeight(100)  # Set the height of the guidance box
+        self.guidance_box.setFixedHeight(100)  
         self.guidance_box.setReadOnly(True)
         self.layout.addWidget(self.guidance_box)
 
-        # Buttons for speech recognition and getting guidance
         self.recognize_button = QPushButton('Speak')
         self.recognize_button.clicked.connect(self.handle_conversation)
         self.layout.addWidget(self.recognize_button)
@@ -212,11 +197,9 @@ class ChatBotApp(QWidget):
         self.guidance_button.clicked.connect(self.provide_guidance)
         self.layout.addWidget(self.guidance_button)
 
-        # Rating label for question quality and patient sentiment
         self.rating_label = QLabel("Question Quality: N/A | Patient Sentiment: N/A")
         self.layout.addWidget(self.rating_label)
 
-        # Set the layout for the main window
         self.setLayout(self.layout)
 
 
