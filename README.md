@@ -30,7 +30,7 @@ The following libraries and tools are required to run the AI Medical Chatbot:
 - Sentiment Analysis: The bot performs sentiment analysis on the AI responses, providing insights into the patient's emotional state.
 - Question Quality Evaluation: The chatbot evaluates the quality of the questions you ask, providing feedback to help improve your medical questioning skills.
 - Guidance for Medical Investigation: The bot offers guidance for the next questions to ask based on the conversation context and chief complaint.
-- 
+
 ##  Code Overview
 The core functionality of the AI Medical Chatbot is built using Python and several libraries for natural language processing, speech recognition, and GUI creation. Below is an outline of the main components of the code:
 
